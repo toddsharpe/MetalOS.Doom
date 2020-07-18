@@ -54,11 +54,7 @@
 
 void M_MakeDirectory(char *path)
 {
-#ifdef _WIN32
-    mkdir(path);
-#else
-    mkdir(path, 0755);
-#endif
+    //TODO:
 }
 
 // Check if a file exists
@@ -79,7 +75,8 @@ boolean M_FileExists(char *filename)
         // If we can't open because the file is a directory, the 
         // "file" exists at least!
 
-        return errno == EISDIR;
+        //return errno == EISDIR;
+        return false;
     }
 }
 
@@ -157,42 +154,6 @@ int M_ReadFile(char *name, byte **buffer)
 		
     *buffer = buf;
     return length;
-}
-
-// Returns the path to a temporary file of the given name, stored
-// inside the system temporary directory.
-//
-// The returned value must be freed with Z_Free after use.
-
-char *M_TempFile(char *s)
-{
-    char *tempdir;
-
-#ifdef _WIN32
-
-    // Check the TEMP environment variable to find the location.
-
-    tempdir = getenv("TEMP");
-
-    if (tempdir == NULL)
-    {
-        tempdir = ".";
-    }
-#else
-    // In Unix, just use /tmp.
-
-    tempdir = "/tmp";
-#endif
-
-    return M_StringJoin(tempdir, DIR_SEPARATOR_S, s, NULL);
-}
-
-boolean M_StrToInt(const char *str, int *result)
-{
-    return sscanf(str, " 0x%x", result) == 1
-        || sscanf(str, " 0X%x", result) == 1
-        || sscanf(str, " 0%o", result) == 1
-        || sscanf(str, " %d", result) == 1;
 }
 
 void M_ExtractFileBase(char *path, char *dest)
@@ -285,7 +246,7 @@ char *M_StrCaseStr(char *haystack, char *needle)
 }
 
 //
-// Safe version of strdup() that checks the string was successfully
+// Safe version of _strdup() that checks the string was successfully
 // allocated.
 //
 
@@ -293,7 +254,7 @@ char *M_StringDuplicate(const char *orig)
 {
     char *result;
 
-    result = strdup(orig);
+    result = _strdup(orig);
 
     if (result == NULL)
     {
@@ -514,23 +475,4 @@ int M_snprintf(char *buf, size_t buf_len, const char *s, ...)
     va_end(args);
     return result;
 }
-
-#ifdef _WIN32
-
-char *M_OEMToUTF8(const char *oem)
-{
-    unsigned int len = strlen(oem) + 1;
-    wchar_t *tmp;
-    char *result;
-
-    tmp = malloc(len * sizeof(wchar_t));
-    MultiByteToWideChar(CP_OEMCP, 0, oem, len, tmp, len);
-    result = malloc(len * 4);
-    WideCharToMultiByte(CP_UTF8, 0, tmp, len, result, len * 4, NULL, NULL);
-    free(tmp);
-
-    return result;
-}
-
-#endif
 

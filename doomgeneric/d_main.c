@@ -269,13 +269,6 @@ void D_Display (void)
 		}
     }
 
-    if (testcontrols)
-    {
-        // Box showing current mouse speed
-
-        V_DrawMouseSpeedBox(testcontrols_mousespeed);
-    }
-
     menuactivestate = menuactive;
     viewactivestate = viewactive;
     inhelpscreensstate = inhelpscreens;
@@ -1126,7 +1119,7 @@ static void LoadIwadDeh(void)
         }
         else
         {
-            chex_deh = strdup("chex.deh");
+            chex_deh = _strdup("chex.deh");
         }
 
         // If the dehacked patch isn't found, try searching the WAD
@@ -1170,8 +1163,6 @@ void D_DoomMain (void)
     I_AtExit(D_Endoom, false);
 
     // print banner
-
-    I_PrintBanner(PACKAGE_STRING);
 
     DEH_printf("Z_Init: Init zone memory allocation daemon. \n");
     Z_Init ();
@@ -1584,13 +1575,11 @@ void D_DoomMain (void)
     if (W_CheckNumForName("SS_START") >= 0
      || W_CheckNumForName("FF_END") >= 0)
     {
-        I_PrintDivider();
         printf(" WARNING: The loaded WAD file contains modified sprites or\n"
                " floor textures.  You may want to use the '-merge' command\n"
                " line option instead of '-file'.\n");
     }
 
-    I_PrintStartupBanner(gamedescription);
     PrintDehackedBanners();
 
     // Freedoom's IWADs are Boom-compatible, which means they usually
@@ -1602,7 +1591,6 @@ void D_DoomMain (void)
                " files, which might not work in this port. See this page\n"
                " for more information on how to play using Freedoom:\n"
                "   http://www.chocolate-doom.org/wiki/index.php/Freedoom\n");
-        I_PrintDivider();
     }
 
     DEH_printf("I_Init: Setting up machine state.\n");

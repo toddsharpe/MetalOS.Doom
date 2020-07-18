@@ -1408,16 +1408,7 @@ static void SpechitOverrun(line_t *ld)
         // Use the specified magic value when emulating spechit overruns.
         //
 
-        p = M_CheckParmWithArgs("-spechit", 1);
-        
-        if (p > 0)
-        {
-            M_StrToInt(myargv[p+1], (int *) &baseaddr);
-        }
-        else
-        {
             baseaddr = DEFAULT_SPECHIT_MAGIC;
-        }
     }
     
     // Calculate address used in doom2.exe

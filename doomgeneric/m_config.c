@@ -1713,17 +1713,17 @@ static void SaveDefaultCollection(default_collection_t *collection)
 
 // Parses integer values in the configuration file
 
-static int ParseIntParameter(char *strparm)
-{
-    int parm;
-
-    if (strparm[0] == '0' && strparm[1] == 'x')
-        sscanf(strparm+2, "%x", &parm);
-    else
-        sscanf(strparm, "%i", &parm);
-
-    return parm;
-}
+//static int ParseIntParameter(char *strparm)
+//{
+//    int parm;
+//
+//    if (strparm[0] == '0' && strparm[1] == 'x')
+//        sscanf(strparm+2, "%x", &parm);
+//    else
+//        sscanf(strparm, "%i", &parm);
+//
+//    return parm;
+//}
 
 static void SetVariable(default_t *def, char *value)
 {
@@ -1734,36 +1734,38 @@ static void SetVariable(default_t *def, char *value)
     switch (def->type)
     {
         case DEFAULT_STRING:
-            * (char **) def->location = strdup(value);
+            * (char **) def->location = _strdup(value);
             break;
 
         case DEFAULT_INT:
         case DEFAULT_INT_HEX:
-            * (int *) def->location = ParseIntParameter(value);
+            //* (int *) def->location = ParseIntParameter(value);
+            exit(-2);
             break;
 
         case DEFAULT_KEY:
 
             // translate scancodes read from config
             // file (save the old value in untranslated)
+            exit(-3);
+            //intparm = ParseIntParameter(value);
+            //def->untranslated = intparm;
+            //if (intparm >= 0 && intparm < 128)
+            //{
+            //    intparm = scantokey[intparm];
+            //}
+            //else
+            //{
+            //    intparm = 0;
+            //}
 
-            intparm = ParseIntParameter(value);
-            def->untranslated = intparm;
-            if (intparm >= 0 && intparm < 128)
-            {
-                intparm = scantokey[intparm];
-            }
-            else
-            {
-                intparm = 0;
-            }
-
-            def->original_translated = intparm;
-            * (int *) def->location = intparm;
+            //def->original_translated = intparm;
+            //* (int *) def->location = intparm;
             break;
 
         case DEFAULT_FLOAT:
-            * (float *) def->location = (float) atof(value);
+            //* (float *) def->location = (float) atof(value);
+            exit(-1);
             break;
     }
 }
@@ -2021,21 +2023,21 @@ const char *M_GetStrVariable(char *name)
 
     return *((const char **) variable->location);
 }
-
-float M_GetFloatVariable(char *name)
-{
-    default_t *variable;
-
-    variable = GetDefaultForName(name);
-
-    if (variable == NULL || !variable->bound
-     || variable->type != DEFAULT_FLOAT)
-    {
-        return 0;
-    }
-
-    return *((float *) variable->location);
-}
+//
+//float M_GetFloatVariable(char *name)
+//{
+//    default_t *variable;
+//
+//    variable = GetDefaultForName(name);
+//
+//    if (variable == NULL || !variable->bound
+//     || variable->type != DEFAULT_FLOAT)
+//    {
+//        return 0;
+//    }
+//
+//    return *((float *) variable->location);
+//}
 
 // Get the path to the default configuration dir to use, if NULL
 // is passed to M_SetConfigDir.
@@ -2096,7 +2098,7 @@ char *M_GetSaveGameDir(char *iwadname)
 
     if (!strcmp(configdir, ""))
     {
-    	savegamedir = strdup("");
+    	savegamedir = _strdup("");
     }
     else
     {

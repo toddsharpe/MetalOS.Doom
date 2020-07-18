@@ -37,7 +37,7 @@ static const iwad_t iwads[] =
     { "doom2.wad",    doom2,     commercial, "Doom II" },
     { "plutonia.wad", pack_plut, commercial, "Final Doom: Plutonia Experiment" },
     { "tnt.wad",      pack_tnt,  commercial, "Final Doom: TNT: Evilution" },
-    { "doom.wad",     doom,      retail,     "Doom" },
+    { "DOOM.WAD",     doom,      retail,     "Doom" },
     { "DOOM1.WAD",    doom,      shareware,  "Doom Shareware" },
     { "chex.wad",     pack_chex, shareware,  "Chex Quest" },
     { "hacx.wad",     pack_hacx, commercial, "Hacx" },
@@ -318,47 +318,6 @@ static void CheckSteamEdition(void)
     free(install_path);
 }
 
-// The BFG edition ships with a full set of GUS patches. If we find them,
-// we can autoconfigure to use them.
-
-static void CheckSteamGUSPatches(void)
-{
-    const char *current_path;
-    char *install_path;
-    char *patch_path;
-    int len;
-
-    // Already configured? Don't stomp on the user's choices.
-    current_path = M_GetStrVariable("gus_patch_path");
-    if (current_path != NULL && strlen(current_path) > 0)
-    {
-        return;
-    }
-
-    install_path = GetRegistryString(&steam_install_location);
-
-    if (install_path == NULL)
-    {
-        return;
-    }
-
-    len = strlen(install_path) + strlen(STEAM_BFG_GUS_PATCHES) + 20;
-    patch_path = malloc(len);
-    M_snprintf(patch_path, len, "%s\\%s\\ACBASS.PAT",
-               install_path, STEAM_BFG_GUS_PATCHES);
-
-    // Does acbass.pat exist? If so, then set gus_patch_path.
-    if (M_FileExists(patch_path))
-    {
-        M_snprintf(patch_path, len, "%s\\%s",
-                   install_path, STEAM_BFG_GUS_PATCHES);
-        M_SetVariable("gus_patch_path", patch_path);
-    }
-
-    free(patch_path);
-    free(install_path);
-}
-
 // Default install directories for DOS Doom
 
 static void CheckDOSDefaults(void)
@@ -414,7 +373,7 @@ static char *CheckDirectoryHasIWAD(char *dir, char *iwadname)
 
     if (DirIsFile(dir, iwadname) && M_FileExists(dir))
     {
-        return strdup(dir);
+        return _strdup(dir);
     }
 
     // Construct the full path to the IWAD if it is located in
@@ -422,7 +381,7 @@ static char *CheckDirectoryHasIWAD(char *dir, char *iwadname)
 
     if (!strcmp(dir, "."))
     {
-        filename = strdup(iwadname);
+        filename = _strdup(iwadname);
     }
     else
     {
@@ -527,7 +486,7 @@ static void AddDoomWadPath(void)
         return;
     }
 
-    doomwadpath = strdup(doomwadpath);
+    doomwadpath = _strdup(doomwadpath);
 
     // Add the initial directory
 
@@ -649,7 +608,7 @@ char *D_FindWADByName(char *name)
 
         if (DirIsFile(iwad_dirs[i], name) && M_FileExists(iwad_dirs[i]))
         {
-            return strdup(iwad_dirs[i]);
+            return _strdup(iwad_dirs[i]);
         }
 
         // Construct a string for the full path
