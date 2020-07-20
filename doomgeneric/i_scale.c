@@ -374,8 +374,12 @@ static void I_InitStretchTables(byte *palette)
     // mix 80%  =  stretch_tables[0] used backwards
     // mix 100% =  just write line 2
 
+    printf("I_InitStretchTables: Generating lookup tables..");
+    fflush(stdout);
     stretch_tables[0] = GenerateStretchTable(palette, 20);
+    printf(".."); fflush(stdout);
     stretch_tables[1] = GenerateStretchTable(palette, 40);
+    puts("");
 }
 
 // Create 50%/50% table for 800x600 squash mode
@@ -388,7 +392,9 @@ static void I_InitSquashTable(byte *palette)
     }
 
     printf("I_InitSquashTable: Generating lookup table..");
+    fflush(stdout);
     half_stretch_table = GenerateStretchTable(palette, 50);
+    puts("");
 }
 
 // Destroy the scaling lookup tables. This should only ever be called

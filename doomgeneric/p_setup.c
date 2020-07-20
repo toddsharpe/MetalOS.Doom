@@ -148,6 +148,25 @@ void P_LoadVertexes (int lump)
 }
 
 //
+// GetSectorAtNullAddress
+//
+sector_t* GetSectorAtNullAddress(void)
+{
+    static boolean null_sector_is_initialized = false;
+    static sector_t null_sector;
+
+    if (!null_sector_is_initialized)
+    {
+        memset(&null_sector, 0, sizeof(null_sector));
+        I_GetMemoryValue(0, &null_sector.floorheight, 4);
+        I_GetMemoryValue(4, &null_sector.ceilingheight, 4);
+        null_sector_is_initialized = true;
+    }
+
+    return &null_sector;
+}
+
+//
 // P_LoadSegs
 //
 void P_LoadSegs (int lump)
@@ -184,11 +203,26 @@ void P_LoadSegs (int lump)
 
         if (ldef-> flags & ML_TWOSIDED)
         {
-            li->backsector = sides[ldef->sidenum[side ^ 1]].sector;
+            sidenum = ldef->sidenum[side ^ 1];
+
+            // If the sidenum is out of range, this may be a "glass hack"
+            // impassible window.  Point at side #0 (this may not be
+            // the correct Vanilla behavior; however, it seems to work for
+            // OTTAWAU.WAD, which is the one place I've seen this trick
+            // used).
+
+            if (sidenum < 0 || sidenum >= numsides)
+            {
+                li->backsector = GetSectorAtNullAddress();
+            }
+            else
+            {
+                li->backsector = sides[sidenum].sector;
+            }
         }
         else
         {
-	        li->backsector = 0;
+	    li->backsector = 0;
         }
     }
 	

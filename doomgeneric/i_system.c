@@ -55,8 +55,6 @@
 #include <CoreFoundation/CFUserNotification.h>
 #endif
 
-#include <Debug.h>
-
 #define DEFAULT_RAM 6 /* MiB */
 #define MIN_RAM     6  /* MiB */
 
@@ -163,6 +161,44 @@ byte *I_ZoneBase (int *size)
            zonemem, *size);
 
     return zonemem;
+}
+
+void I_PrintBanner(char *msg)
+{
+    int i;
+    int spaces = 35 - (strlen(msg) / 2);
+
+    for (i=0; i<spaces; ++i)
+        putchar(' ');
+
+    puts(msg);
+}
+
+void I_PrintDivider(void)
+{
+    int i;
+
+    for (i=0; i<75; ++i)
+    {
+        putchar('=');
+    }
+
+    putchar('\n');
+}
+
+void I_PrintStartupBanner(char *gamedescription)
+{
+    I_PrintDivider();
+    I_PrintBanner(gamedescription);
+    I_PrintDivider();
+    
+    printf(
+    " " PACKAGE_NAME " is free software, covered by the GNU General Public\n"
+    " License.  There is NO warranty; not even for MERCHANTABILITY or FITNESS\n"
+    " FOR A PARTICULAR PURPOSE. You are welcome to change and distribute\n"
+    " copies under certain conditions. See the source for more information.\n");
+
+    I_PrintDivider();
 }
 
 // 
@@ -339,22 +375,19 @@ void I_Error (char *error, ...)
         already_quitting = true;
     }
 
-    DebugPrintf(error);
-    //TODO: finish displaying the error
+    // Message first.
+    va_start(argptr, error);
+    //fprintf(stderr, "\nError: ");
+    vfprintf(stderr, error, argptr);
+    fprintf(stderr, "\n\n");
+    va_end(argptr);
+    fflush(stderr);
 
-    //// Message first.
-    //va_start(argptr, error);
-    ////fprintf(stderr, "\nError: ");
-    //vfprintf(stderr, error, argptr);
-    //fprintf(stderr, "\n\n");
-    //va_end(argptr);
-    //fflush(stderr);
-
-    //// Write a copy of the message into buffer.
-    //va_start(argptr, error);
-    //memset(msgbuf, 0, sizeof(msgbuf));
-    //M_vsnprintf(msgbuf, sizeof(msgbuf), error, argptr);
-    //va_end(argptr);
+    // Write a copy of the message into buffer.
+    va_start(argptr, error);
+    memset(msgbuf, 0, sizeof(msgbuf));
+    M_vsnprintf(msgbuf, sizeof(msgbuf), error, argptr);
+    va_end(argptr);
 
     // Shutdown. Here might be other errors.
 
@@ -372,6 +405,54 @@ void I_Error (char *error, ...)
 
     exit_gui_popup = !M_ParmExists("-nogui");
 
+    // Pop up a GUI dialog box to show the error message, if the
+    // game was not run from the console (and the user will
+    // therefore be unable to otherwise see the message).
+    if (exit_gui_popup && !I_ConsoleStdout())
+#ifdef _WIN32
+    {
+        wchar_t wmsgbuf[512];
+
+        MultiByteToWideChar(CP_ACP, 0,
+                            msgbuf, strlen(msgbuf) + 1,
+                            wmsgbuf, sizeof(wmsgbuf));
+
+        MessageBoxW(NULL, wmsgbuf, L"", MB_OK);
+    }
+#elif defined(__MACOSX__)
+    {
+        CFStringRef message;
+	int i;
+
+	// The CoreFoundation message box wraps text lines, so replace
+	// newline characters with spaces so that multiline messages
+	// are continuous.
+
+	for (i = 0; msgbuf[i] != '\0'; ++i)
+        {
+            if (msgbuf[i] == '\n')
+            {
+                msgbuf[i] = ' ';
+            }
+        }
+
+        message = CFStringCreateWithCString(NULL, msgbuf,
+                                            kCFStringEncodingUTF8);
+
+        CFUserNotificationDisplayNotice(0,
+                                        kCFUserNotificationCautionAlertLevel,
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        CFSTR(PACKAGE_STRING),
+                                        message,
+                                        NULL);
+    }
+#else
+    {
+        ZenityErrorBox(msgbuf);
+    }
+#endif
 
     // abort();
 #if ORIGCODE
@@ -414,4 +495,80 @@ static const unsigned char mem_dump_dosbox[DOS_MEM_DUMP_SIZE] = {
 static unsigned char mem_dump_custom[DOS_MEM_DUMP_SIZE];
 
 static const unsigned char *dos_mem_dump = mem_dump_dos622;
+
+boolean I_GetMemoryValue(unsigned int offset, void *value, int size)
+{
+    static boolean firsttime = true;
+
+    if (firsttime)
+    {
+        int p, i, val;
+
+        firsttime = false;
+        i = 0;
+
+        //!
+        // @category compat
+        // @arg <version>
+        //
+        // Specify DOS version to emulate for NULL pointer dereference
+        // emulation.  Supported versions are: dos622, dos71, dosbox.
+        // The default is to emulate DOS 7.1 (Windows 98).
+        //
+
+        p = M_CheckParmWithArgs("-setmem", 1);
+
+        if (p > 0)
+        {
+            if (!strcasecmp(myargv[p + 1], "dos622"))
+            {
+                dos_mem_dump = mem_dump_dos622;
+            }
+            if (!strcasecmp(myargv[p + 1], "dos71"))
+            {
+                dos_mem_dump = mem_dump_win98;
+            }
+            else if (!strcasecmp(myargv[p + 1], "dosbox"))
+            {
+                dos_mem_dump = mem_dump_dosbox;
+            }
+            else
+            {
+                for (i = 0; i < DOS_MEM_DUMP_SIZE; ++i)
+                {
+                    ++p;
+
+                    if (p >= myargc || myargv[p][0] == '-')
+                    {
+                        break;
+                    }
+
+                    M_StrToInt(myargv[p], &val);
+                    mem_dump_custom[i++] = (unsigned char) val;
+                }
+
+                dos_mem_dump = mem_dump_custom;
+            }
+        }
+    }
+
+    switch (size)
+    {
+    case 1:
+        *((unsigned char *) value) = dos_mem_dump[offset];
+        return true;
+    case 2:
+        *((unsigned short *) value) = dos_mem_dump[offset]
+                                    | (dos_mem_dump[offset + 1] << 8);
+        return true;
+    case 4:
+        *((unsigned int *) value) = dos_mem_dump[offset]
+                                  | (dos_mem_dump[offset + 1] << 8)
+                                  | (dos_mem_dump[offset + 2] << 16)
+                                  | (dos_mem_dump[offset + 3] << 24);
+        return true;
+    }
+
+    return false;
+}
 
