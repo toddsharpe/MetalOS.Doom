@@ -165,25 +165,27 @@ byte *I_ZoneBase (int *size)
 
 void I_PrintBanner(char *msg)
 {
-    int i;
-    int spaces = 35 - (strlen(msg) / 2);
+    //int i;
+    //int spaces = 35 - (strlen(msg) / 2);
 
-    for (i=0; i<spaces; ++i)
-        putchar(' ');
+    //for (i=0; i<spaces; ++i)
+    //    putchar(' ');
 
-    puts(msg);
+    //puts(msg);
+    printf(msg);
+    printf("\n");
 }
 
 void I_PrintDivider(void)
 {
-    int i;
+    //int i;
 
-    for (i=0; i<75; ++i)
-    {
-        putchar('=');
-    }
+    //for (i=0; i<75; ++i)
+    //{
+    //    putchar('=');
+    //}
 
-    putchar('\n');
+    //putchar('\n');
 }
 
 void I_PrintStartupBanner(char *gamedescription)
@@ -375,13 +377,8 @@ void I_Error (char *error, ...)
         already_quitting = true;
     }
 
-    // Message first.
-    va_start(argptr, error);
-    //fprintf(stderr, "\nError: ");
-    vfprintf(stderr, error, argptr);
-    fprintf(stderr, "\n\n");
-    va_end(argptr);
-    fflush(stderr);
+    printf(error);
+    printf("\n");
 
     // Write a copy of the message into buffer.
     va_start(argptr, error);
@@ -404,55 +401,6 @@ void I_Error (char *error, ...)
     }
 
     exit_gui_popup = !M_ParmExists("-nogui");
-
-    // Pop up a GUI dialog box to show the error message, if the
-    // game was not run from the console (and the user will
-    // therefore be unable to otherwise see the message).
-    if (exit_gui_popup && !I_ConsoleStdout())
-#ifdef _WIN32
-    {
-        wchar_t wmsgbuf[512];
-
-        MultiByteToWideChar(CP_ACP, 0,
-                            msgbuf, strlen(msgbuf) + 1,
-                            wmsgbuf, sizeof(wmsgbuf));
-
-        MessageBoxW(NULL, wmsgbuf, L"", MB_OK);
-    }
-#elif defined(__MACOSX__)
-    {
-        CFStringRef message;
-	int i;
-
-	// The CoreFoundation message box wraps text lines, so replace
-	// newline characters with spaces so that multiline messages
-	// are continuous.
-
-	for (i = 0; msgbuf[i] != '\0'; ++i)
-        {
-            if (msgbuf[i] == '\n')
-            {
-                msgbuf[i] = ' ';
-            }
-        }
-
-        message = CFStringCreateWithCString(NULL, msgbuf,
-                                            kCFStringEncodingUTF8);
-
-        CFUserNotificationDisplayNotice(0,
-                                        kCFUserNotificationCautionAlertLevel,
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        CFSTR(PACKAGE_STRING),
-                                        message,
-                                        NULL);
-    }
-#else
-    {
-        ZenityErrorBox(msgbuf);
-    }
-#endif
 
     // abort();
 #if ORIGCODE

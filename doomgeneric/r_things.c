@@ -296,7 +296,7 @@ void R_InitSprites (char** namelist)
     {
 	negonearray[i] = -1;
     }
-	
+    
     R_InitSpriteDefs (namelist);
 }
 

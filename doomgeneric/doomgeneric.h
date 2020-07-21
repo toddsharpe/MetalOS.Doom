@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-#define DOOMGENERIC_RESX 640
-#define DOOMGENERIC_RESY 400
+#define DOOMGENERIC_RESX 0x400 //640
+#define DOOMGENERIC_RESY 0x300 //400
 
 
 extern uint32_t* DG_ScreenBuffer;

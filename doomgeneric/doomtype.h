@@ -25,17 +25,8 @@
 // Outside Windows, we use strings.h for str[n]casecmp.
 
 
-#ifdef _WIN32
-
-#define strcasecmp _stricmp
-#define strncasecmp _strnicmp
-
-#else
-
-#include <strings.h>
-
-#endif
-
+#define strcasecmp stricmp
+#define strncasecmp strnicmp
 
 //
 // The packed attribute forces structures to be packed into the minimum 

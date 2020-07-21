@@ -74,7 +74,7 @@ int gametic;
 // When set to true, a single tic is run each time TryRunTics() is called.
 // This is used for -timedemo mode.
 
-boolean singletics = false;
+boolean singletics = true; //METALOS: changed from default of false
 
 // Index of the local player.
 
@@ -211,7 +211,7 @@ void NetUpdate (void)
 
     if (singletics)
         return;
-
+    printf("Line: %d\n", __LINE__);
 #ifdef FEATURE_MULTIPLAYER
 
     // Run network subsystems
@@ -224,7 +224,7 @@ void NetUpdate (void)
     // check time
     nowtime = GetAdjustedTime() / ticdup;
     newtics = nowtime - lasttime;
-
+    printf("Line: %d\n", __LINE__);
     lasttime = nowtime;
 
     if (skiptics <= newtics)
@@ -237,11 +237,12 @@ void NetUpdate (void)
         skiptics -= newtics;
         newtics = 0;
     }
-
+    printf("Line: %d\n", __LINE__);
     // build new ticcmds for console player
 
     for (i=0 ; i<newtics ; i++)
     {
+        printf("Line: %d\n", __LINE__);
         if (!BuildNewTic())
         {
             break;

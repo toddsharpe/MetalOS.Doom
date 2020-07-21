@@ -1715,14 +1715,15 @@ static void SaveDefaultCollection(default_collection_t *collection)
 
 static int ParseIntParameter(char *strparm)
 {
-    int parm;
+    //int parm;
 
-    if (strparm[0] == '0' && strparm[1] == 'x')
-        sscanf(strparm+2, "%x", &parm);
-    else
-        sscanf(strparm, "%i", &parm);
+    //if (strparm[0] == '0' && strparm[1] == 'x')
+    //    sscanf(strparm+2, "%x", &parm);
+    //else
+    //    sscanf(strparm, "%i", &parm);
 
-    return parm;
+    //return parm;
+    return 0;
 }
 
 static void SetVariable(default_t *def, char *value)
@@ -1762,9 +1763,9 @@ static void SetVariable(default_t *def, char *value)
             * (int *) def->location = intparm;
             break;
 
-        case DEFAULT_FLOAT:
-            * (float *) def->location = (float) atof(value);
-            break;
+        //case DEFAULT_FLOAT:
+        //    * (float *) def->location = (float) atof(value);
+        //    break;
     }
 }
 
@@ -2020,21 +2021,6 @@ const char *M_GetStrVariable(char *name)
     }
 
     return *((const char **) variable->location);
-}
-
-float M_GetFloatVariable(char *name)
-{
-    default_t *variable;
-
-    variable = GetDefaultForName(name);
-
-    if (variable == NULL || !variable->bound
-     || variable->type != DEFAULT_FLOAT)
-    {
-        return 0;
-    }
-
-    return *((float *) variable->location);
 }
 
 // Get the path to the default configuration dir to use, if NULL
