@@ -49,7 +49,7 @@ static unsigned char convertToDoomKey(unsigned char key)
 		key = KEY_RSHIFT;
 		break;
 	default:
-		//key = tolower(key);
+		key = tolower(key);
 		break;
 	}
 
