@@ -5,11 +5,13 @@
 #include <stdio.h>
 
 #include <MetalOS.h>
+#include <ctype.h>
+#include <string.h>
+#include <Debug.h>
 
 //static BITMAPINFO s_Bmi = { sizeof(BITMAPINFOHEADER), DOOMGENERIC_RESX, -DOOMGENERIC_RESY, 1, 32 };
 //static HWND s_Hwnd = 0;
 //static HDC s_Hdc = 0;
-
 
 #define KEYQUEUE_SIZE 16
 
@@ -67,9 +69,9 @@ static void addKeyToQueue(int pressed, unsigned char keyCode)
 	s_KeyQueueWriteIndex %= KEYQUEUE_SIZE;
 }
 
-static void ProcessMessage(const struct Message* message)
+static void ProcessMessage(const struct Message& message)
 {
-	switch (message->Header.MessageType)
+	switch (message.Header.MessageType)
 	{
 		//case WM_CLOSE:
 		//	DestroyWindow(hwnd);
@@ -78,16 +80,15 @@ static void ProcessMessage(const struct Message* message)
 		//	PostQuitMessage(0);
 		//	ExitProcess(0);
 		//	break;
-	case MessageTypeKeyEvent:
-		addKeyToQueue(message->KeyEvent.Flags.Pressed, message->KeyEvent.Key);
+	case MessageType::KeyEvent:
+		addKeyToQueue(message.KeyEvent.Flags.Pressed, message.KeyEvent.Key);
 		break;
 		//default:
 			//return DefWindowProcA(hwnd, msg, wParam, lParam);
 	}
-	return 0;
 }
 
-void DG_Init()
+extern "C" void DG_Init()
 {
 	printf("DG_Init\n");
 	
@@ -96,13 +97,13 @@ void DG_Init()
 	memset(s_KeyQueue, 0, KEYQUEUE_SIZE * sizeof(unsigned short));
 }
 
-void DG_DrawFrame()
+extern "C" void DG_DrawFrame()
 {
 	struct Message message;
 	memset(&message, 0, sizeof(struct Message));
-	while (PeekMessage(&message) == Success)
+	while (PeekMessage(message) == SystemCallResult::Success)
 	{
-		ProcessMessage(&message);
+		ProcessMessage(message);
 	}
 
 	SetScreenBuffer(DG_ScreenBuffer);
@@ -112,17 +113,17 @@ void DG_DrawFrame()
 	//SwapBuffers(s_Hdc);
 }
 
-void DG_SleepMs(uint32_t ms)
+extern "C" void DG_SleepMs(uint32_t ms)
 {
 	Sleep(ms);
 }
 
-uint32_t DG_GetTicksMs()
+extern "C" uint32_t DG_GetTicksMs()
 {
 	return GetTickCount();
 }
 
-int DG_GetKey(int* pressed, unsigned char* doomKey)
+extern "C" int DG_GetKey(int* pressed, unsigned char* doomKey)
 {
 	if (s_KeyQueueReadIndex == s_KeyQueueWriteIndex)
 	{
@@ -143,7 +144,7 @@ int DG_GetKey(int* pressed, unsigned char* doomKey)
 	}
 }
 
-void DG_SetWindowTitle(const char * title)
+extern "C" void DG_SetWindowTitle(const char * title)
 {
 	//if (s_Hwnd)
 	//{

@@ -264,7 +264,7 @@
     <ClCompile Include="i_video.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="doomgeneric_metalos.c">
+    <ClCompile Include="doomgeneric_metalos.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
