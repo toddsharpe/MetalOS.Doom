@@ -11,6 +11,7 @@ extern "C"
 {
 #endif
 extern uint32_t* DG_ScreenBuffer;
+extern size_t DG_BufferSize;
 
 void DG_Init();
 void DG_DrawFrame();

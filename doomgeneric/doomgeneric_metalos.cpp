@@ -65,6 +65,8 @@ static void addKeyToQueue(int pressed, unsigned char keyCode)
 	s_KeyQueueWriteIndex %= KEYQUEUE_SIZE;
 }
 
+Handle window;
+
 static void ProcessMessage(const struct Message& message)
 {
 	switch (message.Header.MessageType)
@@ -76,6 +78,13 @@ static void ProcessMessage(const struct Message& message)
 		//	PostQuitMessage(0);
 		//	ExitProcess(0);
 		//	break;
+	case MessageType::PaintEvent:
+		ReadOnlyBuffer buffer;
+		buffer.Length = DG_BufferSize;
+		buffer.Data = DG_ScreenBuffer;
+		PaintWindow(window, buffer);
+		break;
+
 	case MessageType::KeyEvent:
 		addKeyToQueue(message.KeyEvent.Flags.Pressed, message.KeyEvent.Key);
 		break;
@@ -88,7 +97,11 @@ extern "C" void DG_Init()
 {
 	printf("DG_Init\n");
 	
-	Handle window = CreateWindow("Doom");
+	Rectangle bounds;
+	GetScreenRect(bounds);
+	
+	AllocWindow(window, "Doom", bounds);
+	DebugPrintf("Bounds: (0x%x,0x%x)\n", bounds.X, bounds.Y);
 
 	memset(s_KeyQueue, 0, KEYQUEUE_SIZE * sizeof(unsigned short));
 }
@@ -101,8 +114,6 @@ extern "C" void DG_DrawFrame()
 	{
 		ProcessMessage(message);
 	}
-
-	SetScreenBuffer(DG_ScreenBuffer);
 }
 
 extern "C" void DG_SleepMs(uint32_t ms)
