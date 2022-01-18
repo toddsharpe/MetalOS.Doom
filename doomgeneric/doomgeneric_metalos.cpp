@@ -100,7 +100,7 @@ extern "C" void DG_Init()
 	Rectangle bounds;
 	GetScreenRect(bounds);
 	
-	AllocWindow(window, "Doom", bounds);
+	AllocWindow(window, bounds);
 	DebugPrintf("Bounds: (0x%x,0x%x)\n", bounds.X, bounds.Y);
 
 	memset(s_KeyQueue, 0, KEYQUEUE_SIZE * sizeof(unsigned short));
