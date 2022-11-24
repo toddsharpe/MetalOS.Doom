@@ -4,10 +4,12 @@
 
 #include <stdio.h>
 
-#include <MetalOS.h>
+#include <shared/MetalOS.Keys.h>
+#include <shared/MetalOS.Types.h>
+#include <user/MetalOS.h>
 #include <ctype.h>
 #include <string.h>
-#include <Debug.h>
+#include <user/Debug.h>
 
 #define KEYQUEUE_SIZE 16
 
