@@ -4,18 +4,19 @@
 
 #include <stdio.h>
 
-#include <shared/MetalOS.Keys.h>
-#include <shared/MetalOS.Types.h>
 #include <user/MetalOS.h>
+#include <user/MetalOS.UI.h>
+#include <user/Debug.h>
 #include <ctype.h>
 #include <string.h>
-#include <user/Debug.h>
 
 #define KEYQUEUE_SIZE 16
 
 static unsigned short s_KeyQueue[KEYQUEUE_SIZE];
 static unsigned int s_KeyQueueWriteIndex = 0;
 static unsigned int s_KeyQueueReadIndex = 0;
+
+using namespace Graphics;
 
 static unsigned char convertToDoomKey(unsigned char key)
 {
