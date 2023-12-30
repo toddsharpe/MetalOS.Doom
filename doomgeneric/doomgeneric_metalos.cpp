@@ -6,7 +6,7 @@
 
 #include <user/MetalOS.h>
 #include <user/MetalOS.UI.h>
-#include <user/Debug.h>
+#include "Assert.h"
 #include <ctype.h>
 #include <string.h>
 
