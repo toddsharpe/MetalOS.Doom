@@ -208,7 +208,7 @@ void F_Ticker (void)
     {
 	finalecount = 0;
 	finalestage = F_STAGE_ARTSCREEN;
-	wipegamestate = -1;		// force a wipe
+	wipegamestate = (gamestate_t)-1;		// force a wipe
 	if (gameepisode == 3)
 	    S_StartMusic (mus_bunny);
     }
@@ -237,7 +237,7 @@ void F_TextWrite (void)
     int		cy;
     
     // erase the entire screen to a tiled background
-    src = W_CacheLumpName ( finaleflat , PU_CACHE);
+    src = (byte*)W_CacheLumpName ( finaleflat , PU_CACHE);
     dest = I_VideoBuffer;
 	
     for (y=0 ; y<SCREENHEIGHT ; y++)
@@ -322,7 +322,7 @@ castinfo_t	castorder[] = {
     {CC_CYBER, MT_CYBORG},
     {CC_HERO, MT_PLAYER},
 
-    {NULL,0}
+    {NULL,(mobjtype_t)0}
 };
 
 int		castnum;
@@ -339,7 +339,7 @@ boolean		castattacking;
 //
 void F_StartCast (void)
 {
-    wipegamestate = -1;		// force a screen wipe
+    wipegamestate = (gamestate_t)-1;		// force a screen wipe
     castnum = 0;
     caststate = &states[mobjinfo[castorder[castnum].type].seestate];
     casttics = caststate->tics;

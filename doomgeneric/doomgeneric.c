@@ -18,7 +18,8 @@ void doomgeneric_Create(int argc, char **argv)
 
 	M_FindResponseFile();
 
-	DG_ScreenBuffer = malloc(DOOMGENERIC_RESX * DOOMGENERIC_RESY * 4);
+	DG_ScreenBuffer = (pixel_t*)malloc(DG_BufferSize);
+	DebugPrintf("DG_ScreenBuffer: 0x%016x Size: 0x%x\n", DG_ScreenBuffer, DG_BufferSize);
 
 	DG_Init();
 

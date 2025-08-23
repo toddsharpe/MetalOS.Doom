@@ -23,13 +23,6 @@
 
 #include <stdarg.h>
 
-#ifdef _WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#else
-#include <unistd.h>
-#endif
-
 #ifdef ORIGCODE
 #include "SDL.h"
 #endif
@@ -264,7 +257,7 @@ void I_Quit (void)
 #endif
 }
 
-#if !defined(_WIN32) && !defined(__MACOSX__) && !defined(__DJGPP__)
+#if !defined(_WIN32) && !defined(__MACOSX__) && !defined(__DJGPP__) && false
 #define ZENITY_BINARY "/usr/bin/zenity"
 
 // returns non-zero if zenity is available
@@ -454,7 +447,7 @@ void I_Error (char *error, ...)
         exit(-1);
     }
 
-#else
+#elif false
     {
         ZenityErrorBox(msgbuf);
     }

@@ -2249,6 +2249,7 @@ boolean G_CheckDemoStatus (void)
 { 
     int             endtime; 
 	 
+#if 0
     if (timingdemo) 
     { 
         float fps;
@@ -2264,8 +2265,9 @@ boolean G_CheckDemoStatus (void)
 
 	I_Error ("timed %i gametics in %i realtics (%f fps)",
                  gametic, realtics, fps);
-    } 
-	 
+    }
+#endif
+
     if (demoplayback) 
     { 
         W_ReleaseLumpName(defdemoname);

@@ -60,7 +60,7 @@ typedef struct
     int		numpics;
     int		speed;
     
-} anim_t;
+} anim_spec_t;
 
 //
 //      source animation definition
@@ -77,8 +77,8 @@ typedef struct
 
 #define MAXANIMS                32
 
-extern anim_t	anims[MAXANIMS];
-extern anim_t*	lastanim;
+extern anim_spec_t	anims_spec[MAXANIMS];
+extern anim_spec_t*	lastanim;
 
 //
 // P_InitPicAnims
@@ -126,8 +126,8 @@ animdef_t		animdefs[] =
     {-1,        "",             "",             0},
 };
 
-anim_t		anims[MAXANIMS];
-anim_t*		lastanim;
+anim_spec_t		anims_spec[MAXANIMS];
+anim_spec_t*		lastanim;
 
 
 //
@@ -146,7 +146,7 @@ void P_InitPicAnims (void)
 
     
     //	Init animation
-    lastanim = anims;
+    lastanim = anims_spec;
     for (i=0 ; animdefs[i].istexture != -1 ; i++)
     {
         char *startname, *endname;
@@ -1092,7 +1092,7 @@ int		levelTimeCount;
 
 void P_UpdateSpecials (void)
 {
-    anim_t*	anim;
+    anim_spec_t*	anim;
     int		pic;
     int		i;
     line_t*	line;
@@ -1107,7 +1107,7 @@ void P_UpdateSpecials (void)
     }
     
     //	ANIMATE FLATS AND TEXTURES GLOBALLY
-    for (anim = anims ; anim < lastanim ; anim++)
+    for (anim = anims_spec ; anim < lastanim ; anim++)
     {
 	for (i=anim->basepic ; i<anim->basepic+anim->numpics ; i++)
 	{
