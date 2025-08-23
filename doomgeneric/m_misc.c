@@ -24,18 +24,6 @@
 #include <ctype.h>
 #include <errno.h>
 
-#ifdef _WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <io.h>
-#ifdef _MSC_VER
-#include <direct.h>
-#endif
-#else
-#include <sys/stat.h>
-#include <sys/types.h>
-#endif
-
 #include "doomtype.h"
 
 #include "deh_str.h"
@@ -54,10 +42,12 @@
 
 void M_MakeDirectory(char *path)
 {
+#if 0
 #ifdef _WIN32
     mkdir(path);
 #else
     mkdir(path, 0755);
+#endif
 #endif
 }
 

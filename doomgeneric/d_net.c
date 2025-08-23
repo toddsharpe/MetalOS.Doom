@@ -47,7 +47,7 @@ static void PlayerQuitGame(player_t *player)
     static char exitmsg[80];
     unsigned int player_num;
 
-    player_num = player - players;
+    player_num = (unsigned int)(player - players);
 
     // Do this the same way as Vanilla Doom does, to allow dehacked
     // replacements of this message
@@ -112,7 +112,7 @@ static void LoadGameSettings(net_gamesettings_t *settings)
     deathmatch = settings->deathmatch;
     startepisode = settings->episode;
     startmap = settings->map;
-    startskill = settings->skill;
+    startskill = (skill_t)settings->skill;
     startloadgame = settings->loadgame;
     lowres_turn = settings->lowres_turn;
     nomonsters = settings->nomonsters;
@@ -129,7 +129,7 @@ static void LoadGameSettings(net_gamesettings_t *settings)
 
     for (i = 0; i < MAXPLAYERS; ++i)
     {
-        playeringame[i] = i < settings->num_players;
+        playeringame[i] = (int)i < settings->num_players;
     }
 }
 

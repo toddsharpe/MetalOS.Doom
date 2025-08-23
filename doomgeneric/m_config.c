@@ -1762,9 +1762,11 @@ static void SetVariable(default_t *def, char *value)
             * (int *) def->location = intparm;
             break;
 
+#if 0
         case DEFAULT_FLOAT:
             * (float *) def->location = (float) atof(value);
             break;
+#endif
     }
 }
 
@@ -2022,6 +2024,7 @@ const char *M_GetStrVariable(char *name)
     return *((const char **) variable->location);
 }
 
+#if 0
 float M_GetFloatVariable(char *name)
 {
     default_t *variable;
@@ -2036,6 +2039,7 @@ float M_GetFloatVariable(char *name)
 
     return *((float *) variable->location);
 }
+#endif
 
 // Get the path to the default configuration dir to use, if NULL
 // is passed to M_SetConfigDir.
